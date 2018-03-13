@@ -59,14 +59,14 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
 
 	/**
-	 * Return the unique id of this application context.
+	 * 获取该application context的唯一id.
 	 * @return the unique id of the context, or {@code null} if none
 	 */
 	@Nullable
 	String getId();
 
 	/**
-	 * Return a name for the deployed application that this context belongs to.
+	 * 获取部署的该context属于的应用的名字, 默认为空字符串
 	 * @return a name for the deployed application, or the empty String by default
 	 */
 	String getApplicationName();
@@ -78,21 +78,21 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 	String getDisplayName();
 
 	/**
-	 * Return the timestamp when this context was first loaded.
+	 * 获取本context初次加载的时间
 	 * @return the timestamp (ms) when this context was first loaded
 	 */
 	long getStartupDate();
 
 	/**
-	 * Return the parent context, or {@code null} if there is no parent
-	 * and this is the root of the context hierarchy.
+	 * 获取父context
+	 * null则无父context,即表示这是context层次的根
 	 * @return the parent context, or {@code null} if there is no parent
 	 */
 	@Nullable
 	ApplicationContext getParent();
 
 	/**
-	 * Expose AutowireCapableBeanFactory functionality for this context.
+	 * 为此context 暴露 (公开)AutowireCapableBeanFactory的功能
 	 * <p>This is not typically used by application code, except for the purpose of
 	 * initializing bean instances that live outside of the application context,
 	 * applying the Spring bean lifecycle (fully or partly) to them.

@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  * <li>{@link org.springframework.context.support.ReloadableResourceBundleMessageSource},
  * being able to reload message definitions without restarting the VM
  * </ul>
- *
+ * 国际化相关的接口
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @see org.springframework.context.support.ResourceBundleMessageSource
