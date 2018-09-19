@@ -275,8 +275,10 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	@Override
 	public Resource[] getResources(String locationPattern) throws IOException {
 		Assert.notNull(locationPattern, "Location pattern must not be null");
+		//若以 classpath*: 开头
 		if (locationPattern.startsWith(CLASSPATH_ALL_URL_PREFIX)) {
 			// a class path resource (multiple resources for same name possible)
+			// 若路径除前缀外包含通配符 */**/?  可能有多个同名资源
 			if (getPathMatcher().isPattern(locationPattern.substring(CLASSPATH_ALL_URL_PREFIX.length()))) {
 				// a class path resource pattern
 				return findPathMatchingResources(locationPattern);
@@ -313,6 +315,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	 */
 	protected Resource[] findAllClassPathResources(String location) throws IOException {
 		String path = location;
+		//???
 		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
@@ -486,13 +489,21 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	 * @see org.springframework.util.PathMatcher
 	 */
 	protected Resource[] findPathMatchingResources(String locationPattern) throws IOException {
+		//返回不包含通配符的根路径 如 classpath*:config/spring-*.xml 则返回 classpath*:config/
+		//返回不包含通配符的根路径 如 classpath*:spring-*.xml 则返回 classpath*:
 		String rootDirPath = determineRootDir(locationPattern);
+		//包含通配符的剩余路径 spring-*.xml
 		String subPattern = locationPattern.substring(rootDirPath.length());
+		//递归调用 getResources ==> findAllClassPathResources()
+		//返回根路径下的资源
 		Resource[] rootDirResources = getResources(rootDirPath);
 		Set<Resource> result = new LinkedHashSet<>(16);
 		for (Resource rootDirResource : rootDirResources) {
+			// 看不太懂 直接return本身
 			rootDirResource = resolveRootDirResource(rootDirResource);
+			//URL 路径
 			URL rootDirUrl = rootDirResource.getURL();
+			//下面的if/else将处理不同的路径
 			if (equinoxResolveMethod != null && rootDirUrl.getProtocol().startsWith("bundle")) {
 				URL resolvedUrl = (URL) ReflectionUtils.invokeMethod(equinoxResolveMethod, null, rootDirUrl);
 				if (resolvedUrl != null) {
@@ -529,6 +540,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	 * @see #retrieveMatchingFiles
 	 */
 	protected String determineRootDir(String location) {
+		// classpath*:config/spring-*.xml
 		int prefixEnd = location.indexOf(':') + 1;
 		int rootDirEnd = location.length();
 		while (rootDirEnd > prefixEnd && getPathMatcher().isPattern(location.substring(prefixEnd, rootDirEnd))) {
